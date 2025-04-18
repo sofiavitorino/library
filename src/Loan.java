@@ -1,17 +1,22 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class Loan {
-    Date startDate;
-    Date returnDate;
-    User user;
+    private LocalDate startDate;
+    private LocalDate returnDate;
+    private User user;
     private List<LoanItem> loanItems;
 
-    public Loan(Date startDate, Date returnDate, User user, Book book){
+    public Loan(LocalDate startDate, LocalDate returnDate, User user, List<LoanItem> loanItems){
         this.startDate = startDate;
         this.returnDate = returnDate;
         this.user = user;
-        this.loanItems = ArrayList<>();
+        this.loanItems = loanItems;
+    }
+
+    public List<LoanItem> getLoanItems(){
+        return loanItems;
     }
 }

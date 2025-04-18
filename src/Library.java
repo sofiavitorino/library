@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,14 +13,14 @@ public class Library {
         this.loans = new ArrayList<>();
     }
 
-    void registerBook(String name, String author, String isbn, int quantity){
-        Book book = new Book(name, author, isbn, quantity);
+    void registerBook(String title, String author, String isbn, int quantity){
+        Book book = new Book(title, author, isbn, quantity);
         books.add(book);
     }
 
-    public User findUserById(String id){
+    public User findUserById(String id) {
         for (User user : users){
-            if(user.getId().equals(id)){
+            if(user.getId().equalsIgnoreCase(id)){
                 return user;
             }
         }
@@ -28,11 +29,23 @@ public class Library {
 
     public Book findBookByTitle(String title) {
         for (Book book : books){
-            if(book.getTitle().toLowerCase().equals(title.toLowerCase())){
+            if(book.getTitle().equalsIgnoreCase(title)){
                 return book;
             }
         }
         return null;
+    }
+
+    public void addLoan(Loan loan) {
+        loans.add(loan);
+    }
+
+    public LoanItem findLoanByIdAndTitle(String id, String Title) {
+        for (Loan loan : loans) {
+            for (LoanItem loanItem : loan.getLoanItems()){
+
+            }
+        }
     }
 }
 

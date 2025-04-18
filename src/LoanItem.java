@@ -1,3 +1,18 @@
 public class LoanItem {
-    Book books;
+    private Book book;
+
+    public LoanItem(Book book){
+        this.book = book;
+    }
+
+    public Book getBook(){
+        return book;
+    }
+
+    public void getLoanItems(){
+
+    }
 }
+
+
+

@@ -1,8 +1,8 @@
 public class User {
-    String name;
-    String id;
-    String email;
-    String phone;
+    private String name;
+    private String id;
+    private String email;
+    private String phone;
 
     public User(String name, String id, String email, String phone) {
         this.name = name;
