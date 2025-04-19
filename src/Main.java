@@ -15,7 +15,7 @@ public class Main {
             System.out.println("[3] Devolver livro");
             System.out.println("[4] Checar catálogo de livros");
             System.out.println("[5] Cadastrar usuário");
-            System.out.println("[6] Atualizar usuário");
+            System.out.println("[6] Conferir empréstimos ativos");
             System.out.println("[0] Sair");
             System.out.println();
             int option = scanner.nextInt();
@@ -93,9 +93,71 @@ public class Main {
                     if (book == null) {
                         System.out.println("Livro não encontrado. Tente novamente.");
                     } else {
-
+                        LoanItem loanItems = library.findLoanItemByIdAndTitle(id, title);
+                        if (loanItems != null){
+                            loanItems.getBook().increaseQuantity();
+                            Loan loan = library.findLoanByIdAndTitle(id, title);
+                            if (loan != null) {
+                                double fine = loan.calculateFine();
+                                if (fine > 0){
+                                    System.out.printf("Livro devolvido com atraso. Multa: R$ %.2f%n", fine);
+                                } else {
+                                    System.out.println("Livro dentro do prazo.");
+                                }
+                                loan.getLoanItems().remove(loanItems);
+                                if (loan.getLoanItems().isEmpty()){
+                                    library.getLoan().remove(loan);
+                                }
+                                System.out.println("Livro devolvido com sucesso!.");
+                            } else {
+                                System.out.println("Empréstimo não encontrado.");
+                            }
+                        }
                     }
                 break;
+                case 4:
+                    System.out.println("Catálogo de livros:");
+                    library.printBookCatalog();
+                break;
+                case 5:
+                    System.out.println("Digite o nome do usuário: ");
+                    String name = scanner.nextLine();
+                    System.out.println("Digite o CPF do usuário: ");
+                    id = scanner.nextLine();
+                    System.out.println("Digite o email do usuário: ");
+                    String email = scanner.nextLine();
+                    System.out.println("Digite o número de celular: ");
+                    String phone = scanner.nextLine();
+                    library.registerUser(name, id, email, phone);
+                    System.out.println("Usuário cadastrado com sucesso!" + "\n");
+                break;
+                case 6:
+                    System.out.println("Digite o CPF do usuário: ");
+                    id = scanner.nextLine();
+                    user = library.findUserById(id);
+                    if(user == null) {
+                        System.out.println("Usuário não encontrado");
+                    } else {
+                        List<Loan> loans = library.findLoansById(id);
+                        if (loans.isEmpty()){
+                            System.out.println("O usuário não possui empréstimo ativos no momento.");
+                        } else {
+                            System.out.println("Empréstimos ativos do usuário " + user.getName());
+                            for (Loan loan : loans) {
+                                System.out.println("------------------------------------");
+                                for (LoanItem loanItem : loan.getLoanItems()) {
+                                    System.out.println("- Título: " + loanItem.getBook().getTitle());
+                                    System.out.println("  Autor: " + loanItem.getBook().getAuthor());
+                                }
+                                System.out.println("Data de empréstimo: " + loan.getStartDate());
+                                System.out.println("Data de devolução: " + loan.getReturnDate());
+                                System.out.println("------------------------------------");
+                            }
+                        }
+                    }
+                break;
+                default:
+                    System.exit(0);
             }
         }
     }

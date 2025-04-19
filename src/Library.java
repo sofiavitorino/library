@@ -13,7 +13,7 @@ public class Library {
         this.loans = new ArrayList<>();
     }
 
-    void registerBook(String title, String author, String isbn, int quantity){
+    public void registerBook(String title, String author, String isbn, int quantity){
         Book book = new Book(title, author, isbn, quantity);
         books.add(book);
     }
@@ -40,13 +40,71 @@ public class Library {
         loans.add(loan);
     }
 
-    public LoanItem findLoanByIdAndTitle(String id, String Title) {
+    public LoanItem findLoanItemByIdAndTitle(String id, String title) {
         for (Loan loan : loans) {
-            for (LoanItem loanItem : loan.getLoanItems()){
+            if(loan.getUser().getId().equals(id)){
+                for (LoanItem loanItem : loan.getLoanItems()) {
+                    if (loanItem.getBook().getTitle().equalsIgnoreCase(title)) {
+                        return loanItem;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
+    public List<Loan> getLoan(){
+        return loans;
+    }
+
+    public Loan findLoanByIdAndTitle(String id, String title){
+        for (Loan loan : loans) {
+            if(loan.getUser().getId().equals(id)){
+                for (LoanItem loanItem : loan.getLoanItems()) {
+                    if (loanItem.getBook().getTitle().equalsIgnoreCase(title)) {
+                        return loan;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<Book> getBooks(){
+        return books;
+    }
+
+    public void printBookCatalog(){
+        List<Book> books = getBooks();
+        if(books.isEmpty()) {
+            System.out.println("Não há livros cadastrados no catálogo.");
+            System.out.println();
+        } else {
+            for (Book book : books){
+                System.out.println("------------------------------------");
+                System.out.println("Título: " + book.getTitle());
+                System.out.println("Autor: " + book.getAuthor());
+                System.out.println("Quantidade: " + book.getQuantity());
+                System.out.println("------------------------------------");
+                System.out.println();
             }
         }
     }
+
+    public void registerUser(String name, String id, String email, String phone){
+        User user = new User(name, id, email, phone);
+        users.add(user);
+    }
+
+    public List<Loan> findLoansById(String id){
+        for (Loan loan : loans) {
+            if(loan.getUser().getId().equals(id)){
+                loans.add(loan);
+            }
+        }
+        return null;
+    }
+
 }
 
 

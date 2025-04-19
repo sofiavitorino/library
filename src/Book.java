@@ -22,4 +22,12 @@ public class Book {
     public void decreaseQuantity(){
         this.quantity--;
     }
+
+    public void increaseQuantity(){
+        this.quantity++;
+    }
+
+    public String getAuthor(){
+        return author;
+    }
 }

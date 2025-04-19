@@ -9,9 +9,6 @@ public class LoanItem {
         return book;
     }
 
-    public void getLoanItems(){
-
-    }
 }
 
 
