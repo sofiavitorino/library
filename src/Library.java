@@ -97,12 +97,35 @@ public class Library {
     }
 
     public List<Loan> findLoansById(String id){
+        List<Loan> foundLoans = new ArrayList<>();
         for (Loan loan : loans) {
             if(loan.getUser().getId().equals(id)){
-                loans.add(loan);
+                foundLoans.add(loan);
             }
         }
-        return null;
+        return foundLoans;
+    }
+
+    public List<User> getUsers(){
+        return users;
+    }
+
+    public void printRegisteredUsers() {
+        List <User> users = getUsers();
+        if (users.isEmpty()) {
+            System.out.println("Não há usuários cadastrados no sistema.");
+            System.out.println();
+        } else {
+            for (User user : users) {
+                System.out.println("------------------------------------");
+                System.out.println("Nome: " + user.getName());
+                System.out.println("CPF: " + user.getId());
+                System.out.println("Email: " + user.getEmail());
+                System.out.println("Telefone: " + user.getPhone());
+                System.out.println("------------------------------------");
+                System.out.println();
+            }
+        }
     }
 
 }

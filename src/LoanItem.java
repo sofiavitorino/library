@@ -9,6 +9,11 @@ public class LoanItem {
         return book;
     }
 
+    @Override
+    public String toString() {
+        return  "Título: " + book.getTitle() + "\nAuthor: " + book.getAuthor();
+    }
+
 }
 
 

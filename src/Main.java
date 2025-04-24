@@ -16,25 +16,49 @@ public class Main {
             System.out.println("[4] Checar catálogo de livros");
             System.out.println("[5] Cadastrar usuário");
             System.out.println("[6] Conferir empréstimos ativos");
+            System.out.println("[7] Listar usuários cadastrados");
             System.out.println("[0] Sair");
-            System.out.println();
             int option = scanner.nextInt();
             scanner.nextLine();
             switch (option) {
                 case 1:
-                    System.out.println("Digite o nome do livro: ");
+                    System.out.println("Digite o título do livro: ");
                     String title = scanner.nextLine();
-                    System.out.println("Digite o nome do autor: ");
+                    if (title.trim().isEmpty()) {
+                        System.out.println("Título não pode ser vazio. Tente novamente.");
+                        continue;
+                    }
+                    System.out.println("Digite o autor do livro: ");
                     String author = scanner.nextLine();
-                    System.out.println("Digite o ISBN: ");
+                    if (author.trim().isEmpty()) {
+                        System.out.println("Autor não pode ser vazio. Tente novamente.");
+                        continue;
+                    }
+                    System.out.println("Digite o ISBN do livro: ");
                     String isbn = scanner.nextLine();
-                    System.out.println("Digite a quantidade de cópias disponíveis: ");
-                    int quantity = scanner.nextInt();
+                    if (isbn.trim().isEmpty()) {
+                        System.out.println("ISBN não pode ser vazio. Tente novamente.");
+                        continue;
+                    }
+                    System.out.println("Digite a quantidade de livros disponíveis: ");
+                    int quantity;
+                    while (true) {
+                        try {
+                            quantity = Integer.parseInt(scanner.nextLine());
+                            if (quantity <= 0) {
+                                System.out.println("A quantidade deve ser maior que 0. Tente novamente.");
+                            } else {
+                                break;
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Entrada inválida! Por favor, digite um número válido.");
+                        }
+                    }
                     library.registerBook(title, author, isbn, quantity);
                     System.out.println("Livro cadastrado com sucesso!" + "\n");
                 break;
                 case 2:
-                    System.out.println("Digite o ID do usuário");
+                    System.out.println("Digite o CPF do usuário");
                     String id = scanner.nextLine();
                     User user = library.findUserById(id);
                     if (user == null) {
@@ -44,39 +68,56 @@ public class Main {
                         List<LoanItem> loanItems = new ArrayList<>();
                         int maxBooks = 5;
                         int count = 0;
+
+                        System.out.println("Livros disponíveis pra empréstimo:");
+                        library.printBookCatalog();
+
                         while (count < maxBooks) {
-                            System.out.println("Digite o nome do livro: ");
+                            System.out.println("Digite o nome do livro ou digite '0' para sair: ");
                             title = scanner.nextLine();
-                            Book book = library.findBookByTitle(title);
-                            if (book == null) {
-                                System.out.println("Livro não encontrado. Tente novamente.");
-                                continue;
-                            }
-                            if (book.getQuantity() <= 0) {
-                                System.out.println("Não há cópias disponíveis no momento.");
-                                continue;
-                            }
-                            LoanItem item = new LoanItem(book);
-                            loanItems.add(item);
-                            book.decreaseQuantity();
-                            count++;
-                            if(count >= maxBooks){
-                                System.out.println("Você atingiu o limite de 5 livros.");
+
+                            if (title.equalsIgnoreCase("0")){
+                                System.out.println("Nenhum livro emprestado.");
                                 break;
                             } else {
-                                System.out.println("Deseja emprestar mais um livro? (s/n)");
-                                String response = scanner.nextLine();
-                                if(!response.equalsIgnoreCase("s")){
+                                Book book = library.findBookByTitle(title);
+
+                                if (book == null) {
+                                    System.out.println("Livro não encontrado. Tente novamente.");
+                                    continue;
+                                }
+                                if (book.getQuantity() <= 0) {
+                                    System.out.println("Não há cópias disponíveis no momento.");
+                                    continue;
+                                }
+                                LoanItem item = new LoanItem(book);
+                                loanItems.add(item);
+                                book.decreaseQuantity();
+                                count++;
+                                if(count >= maxBooks){
+                                    System.out.println("Você atingiu o limite de 5 livros.");
                                     break;
+                                } else {
+                                    System.out.println("Deseja emprestar mais um livro? (s/n)");
+                                    String response = scanner.nextLine();
+                                    if(!response.equalsIgnoreCase("s")){
+                                        break;
+                                    }
                                 }
                             }
                         }
-                        LocalDate startDate = LocalDate.now();
-                        LocalDate returnDate = startDate.plusDays(15);
-                        Loan loan = new Loan(startDate, returnDate, user, loanItems);
-                        library.addLoan(loan);
+                        if(!loanItems.isEmpty()) {
+                            LocalDate startDate = LocalDate.now();
+                            LocalDate returnDate = startDate.plusDays(15);
+                            Loan loan = new Loan(startDate, returnDate, user, loanItems);
+                            library.addLoan(loan);
 
-                        System.out.println(loanItems);
+                            System.out.println("Livros emprestados: ");
+                            for (LoanItem item : loanItems) {
+                                System.out.println(item);
+                            }
+                        }
+                        System.out.println();
                     }
                 break;
                 case 3:
@@ -87,30 +128,38 @@ public class Main {
                         System.out.println("Usuário não cadastrado no sistema." + "\n");
                         break;
                     }
-                    System.out.println("Digite o título do livro a ser devolvido:");
-                    title = scanner.nextLine();
-                    Book book = library.findBookByTitle(title);
-                    if (book == null) {
-                        System.out.println("Livro não encontrado. Tente novamente.");
-                    } else {
-                        LoanItem loanItems = library.findLoanItemByIdAndTitle(id, title);
-                        if (loanItems != null){
-                            loanItems.getBook().increaseQuantity();
-                            Loan loan = library.findLoanByIdAndTitle(id, title);
-                            if (loan != null) {
-                                double fine = loan.calculateFine();
-                                if (fine > 0){
-                                    System.out.printf("Livro devolvido com atraso. Multa: R$ %.2f%n", fine);
+                    while (true){
+                        System.out.println("Digite o título do livro a ser devolvido:");
+                        title = scanner.nextLine();
+                        Book book = library.findBookByTitle(title);
+                        if (book == null) {
+                            System.out.println("Livro não encontrado. Tente novamente.");
+                        } else {
+                            LoanItem loanItems = library.findLoanItemByIdAndTitle(id, title);
+                            if (loanItems != null){
+                                loanItems.getBook().increaseQuantity();
+                                Loan loan = library.findLoanByIdAndTitle(id, title);
+                                if (loan != null) {
+                                    double fine = loan.calculateFine();
+                                    if (fine > 0){
+                                        System.out.printf("Livro devolvido com atraso. Multa: R$ %.2f%n", fine);
+                                    } else {
+                                        System.out.println("Livro dentro do prazo.");
+                                    }
+                                    loan.getLoanItems().remove(loanItems);
+                                    if (loan.getLoanItems().isEmpty()){
+                                        library.getLoan().remove(loan);
+                                    }
+                                    System.out.println("Livro devolvido com sucesso!.");
                                 } else {
-                                    System.out.println("Livro dentro do prazo.");
+                                    System.out.println("Empréstimo não encontrado.");
                                 }
-                                loan.getLoanItems().remove(loanItems);
-                                if (loan.getLoanItems().isEmpty()){
-                                    library.getLoan().remove(loan);
+                                System.out.println("Deseja devolver mais um livro? (s/n)");
+                                String response = scanner.nextLine();
+                                if(!response.equalsIgnoreCase("s")){
+                                    break;
                                 }
-                                System.out.println("Livro devolvido com sucesso!.");
-                            } else {
-                                System.out.println("Empréstimo não encontrado.");
+                                System.out.println();
                             }
                         }
                     }
@@ -122,14 +171,36 @@ public class Main {
                 case 5:
                     System.out.println("Digite o nome do usuário: ");
                     String name = scanner.nextLine();
+                    if (name.trim().isEmpty()) {
+                        System.out.println("Nome não pode ser vazio. Tente novamente.");
+                        continue;
+                    }
                     System.out.println("Digite o CPF do usuário: ");
                     id = scanner.nextLine();
-                    System.out.println("Digite o email do usuário: ");
-                    String email = scanner.nextLine();
-                    System.out.println("Digite o número de celular: ");
-                    String phone = scanner.nextLine();
-                    library.registerUser(name, id, email, phone);
-                    System.out.println("Usuário cadastrado com sucesso!" + "\n");
+                    if (id.trim().isEmpty()) {
+                        System.out.println("CPF não pode ser vazio. Tente novamente.");
+                        continue;
+                    }
+                    if (library.findUserById(id) != null){
+                        System.out.println("CPF já cadastrado no sistema.");
+                        break;
+                    } else {
+                        System.out.println("Digite o e-mail do usuário: ");
+                        String email = scanner.nextLine();
+                        if (email.trim().isEmpty()) {
+                            System.out.println("E-mail não pode ser vazio. Tente novamente.");
+                            continue;
+                        }
+                        System.out.println("Digite o telefone do usuário: ");
+                        String phone = scanner.nextLine();
+                        if (phone.trim().isEmpty()) {
+                            System.out.println("Telefone não pode ser vazio. Tente novamente.");
+                            continue;
+                        }
+                        library.registerUser(name, id, email, phone);
+                        System.out.println("Usuário cadastrado com sucesso!");
+                        System.out.println();
+                    }
                 break;
                 case 6:
                     System.out.println("Digite o CPF do usuário: ");
@@ -140,7 +211,7 @@ public class Main {
                     } else {
                         List<Loan> loans = library.findLoansById(id);
                         if (loans.isEmpty()){
-                            System.out.println("O usuário não possui empréstimo ativos no momento.");
+                            System.out.println("O usuário não possui empréstimos ativos no momento.");
                         } else {
                             System.out.println("Empréstimos ativos do usuário " + user.getName());
                             for (Loan loan : loans) {
@@ -155,6 +226,10 @@ public class Main {
                             }
                         }
                     }
+                break;
+                case 7:
+                    System.out.println("Usuários cadastrados no sistema: ");
+                    library.printRegisteredUsers();
                 break;
                 default:
                     System.exit(0);
