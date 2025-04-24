@@ -128,6 +128,15 @@ public class Library {
         }
     }
 
+    public boolean hasBooksToReturn(String userId) {
+        for (Loan loan : loans) {
+            if (loan.getUser().getId().equals(userId) && !loan.getLoanItems().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 
 

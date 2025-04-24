@@ -121,45 +121,56 @@ public class Main {
                     }
                 break;
                 case 3:
-                    System.out.println("Digite o ID do usuário: ");
+                    System.out.println("Digite o CPF do usuário: ");
                     id = scanner.nextLine();
                     user = library.findUserById(id);
                     if (user == null) {
                         System.out.println("Usuário não cadastrado no sistema." + "\n");
                         break;
                     }
-                    while (true){
+
+                    boolean hasBooksToReturn = library.hasBooksToReturn(id);
+                    if (!hasBooksToReturn) {
+                        System.out.println("Não há livros a serem devolvidos.");
+                        break;
+                    }
+
+                    while (library.hasBooksToReturn(id)){
                         System.out.println("Digite o título do livro a ser devolvido:");
                         title = scanner.nextLine();
                         Book book = library.findBookByTitle(title);
+
                         if (book == null) {
                             System.out.println("Livro não encontrado. Tente novamente.");
                         } else {
-                            LoanItem loanItems = library.findLoanItemByIdAndTitle(id, title);
-                            if (loanItems != null){
-                                loanItems.getBook().increaseQuantity();
+                            LoanItem loanItem = library.findLoanItemByIdAndTitle(id, title);
+                            if (loanItem != null) {
+                                loanItem.getBook().increaseQuantity();
                                 Loan loan = library.findLoanByIdAndTitle(id, title);
                                 if (loan != null) {
                                     double fine = loan.calculateFine();
-                                    if (fine > 0){
+                                    if (fine > 0) {
                                         System.out.printf("Livro devolvido com atraso. Multa: R$ %.2f%n", fine);
                                     } else {
                                         System.out.println("Livro dentro do prazo.");
                                     }
-                                    loan.getLoanItems().remove(loanItems);
-                                    if (loan.getLoanItems().isEmpty()){
+                                    loan.getLoanItems().remove(loanItem);
+                                    if (loan.getLoanItems().isEmpty()) {
                                         library.getLoan().remove(loan);
                                     }
-                                    System.out.println("Livro devolvido com sucesso!.");
+                                    System.out.println("Livro devolvido com sucesso!");
                                 } else {
                                     System.out.println("Empréstimo não encontrado.");
                                 }
                                 System.out.println("Deseja devolver mais um livro? (s/n)");
                                 String response = scanner.nextLine();
-                                if(!response.equalsIgnoreCase("s")){
+                                if (!response.equalsIgnoreCase("s")) {
                                     break;
                                 }
-                                System.out.println();
+                                if(!library.hasBooksToReturn(id)){
+                                    System.out.println("Não há mais livros a serem devolvidos.");
+                                    break;
+                                }
                             }
                         }
                     }
