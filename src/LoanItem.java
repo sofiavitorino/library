@@ -11,7 +11,7 @@ public class LoanItem {
 
     @Override
     public String toString() {
-        return  "Título: " + book.getTitle() + "\nAuthor: " + book.getAuthor();
+        return  "Title: " + book.getTitle() + "\nAuthor: " + book.getAuthor();
     }
 
 }

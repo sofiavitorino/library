@@ -1,4 +1,3 @@
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,14 +76,14 @@ public class Library {
     public void printBookCatalog(){
         List<Book> books = getBooks();
         if(books.isEmpty()) {
-            System.out.println("Não há livros cadastrados no catálogo.");
+            System.out.println("There are no books registered in the catalog.");
             System.out.println();
         } else {
             for (Book book : books){
                 System.out.println("------------------------------------");
-                System.out.println("Título: " + book.getTitle());
-                System.out.println("Autor: " + book.getAuthor());
-                System.out.println("Quantidade: " + book.getQuantity());
+                System.out.println("Title: " + book.getTitle());
+                System.out.println("Author: " + book.getAuthor());
+                System.out.println("Quantity: " + book.getQuantity());
                 System.out.println("------------------------------------");
                 System.out.println();
             }
@@ -113,15 +112,15 @@ public class Library {
     public void printRegisteredUsers() {
         List <User> users = getUsers();
         if (users.isEmpty()) {
-            System.out.println("Não há usuários cadastrados no sistema.");
+            System.out.println("There are no users registered in the system.");
             System.out.println();
         } else {
             for (User user : users) {
                 System.out.println("------------------------------------");
-                System.out.println("Nome: " + user.getName());
-                System.out.println("CPF: " + user.getId());
+                System.out.println("Name: " + user.getName());
+                System.out.println("ID: " + user.getId());
                 System.out.println("Email: " + user.getEmail());
-                System.out.println("Telefone: " + user.getPhone());
+                System.out.println("Phone: " + user.getPhone());
                 System.out.println("------------------------------------");
                 System.out.println();
             }
@@ -138,5 +137,3 @@ public class Library {
     }
 
 }
-
-
