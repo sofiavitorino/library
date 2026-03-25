@@ -5,16 +5,16 @@ A terminal-based library management system built in Java. Handles book and user 
 **Features:** register books and users, borrow up to 5 books at once, return with automatic fine calculation, check active loans and the full catalog.
 
 ```
------------- Biblioteca ------------
-Escolha a opção desejada:
-[1] Registrar livro
-[2] Emprestar livro
-[3] Devolver livro
-[4] Checar catálogo de livros
-[5] Cadastrar usuário
-[6] Conferir empréstimos ativos
-[7] Listar usuários cadastrados
-[0] Sair
+------------ Library System ------------
+Choose an option:
+[1] Register book
+[2] Borrow book
+[3] Return book
+[4] Check book catalog
+[5] Register user
+[6] Check active loans
+[7] List registered users
+[0] Exit
 ```
 
 **Running locally:**
